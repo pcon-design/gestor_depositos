@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor de Depósitos - Sección Licencias</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-dark: #0f172a;
+            --primary-navy: #1e293b;
+            --accent-blue: #2563eb;
+            --accent-blue-hover: #1d4ed8;
+            --bg-body: #f1f5f9;
+            --bg-card: #ffffff;
+            --border-color: #e2e8f0;
+            --text-main: #334155;
+            --text-muted: #64748b;
+            --danger: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 950px;
+            background: var(--bg-card);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-navy) 100%);
+            padding: 24px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid var(--accent-blue);
+        }
+
+        .header-title h1 {
+            color: #ffffff;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .header-title span {
+            color: #94a3b8;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .logo-box {
+            background: #ffffff;
+            padding: 6px 14px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .logo-img {
+            height: 42px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .form-body {
+            padding: 32px;
+        }
+
+        .section-label {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--accent-blue);
+            letter-spacing: 0.05em;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background-color: var(--border-color);
+        }
+
+        .grid-layout {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary-navy);
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px 14px;
+            font-size: 14px;
+            color: var(--text-main);
+            background-color: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        input:disabled, select:disabled {
+            background-color: #e2e8f0;
+            color: #64748b;
+            cursor: not-allowed;
+        }
+
+        input:focus:not(:disabled), select:focus:not(:disabled) {
+            background-color: #ffffff;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+        }
+
+        .input-currency {
+            padding-left: 28px;
+        }
+
+        .currency-symbol {
+            position: absolute;
+            left: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .cbu-field, .cuit-field {
+            display: none;
+        }
+
+        .cbu-field.active, .cuit-field.active {
+            display: flex;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            margin-bottom: 32px;
+        }
+
+        .btn {
+            padding: 11px 22px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #f1f5f9;
+            color: var(--text-main);
+        }
+
+        .btn-add {
+            background-color: #059669;
+            color: #ffffff;
+            border: none;
+        }
+
+        .btn-add:hover {
+            background-color: #047857;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-blue);
+            color: #ffffff;
+            border: none;
+            box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-blue-hover);
+        }
+
+        .btn-danger {
+            background: transparent;
+            color: var(--danger);
+            border: 1px solid #fecaca;
+            padding: 4px 8px;
+            font-size: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .btn-danger:hover {
+            background-color: #fee2e2;
+        }
+
+        .btn-danger-large {
+            padding: 11px 22px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 24px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f8fafc;
+            color: var(--primary-navy);
+            font-weight: 600;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-bancor {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+
+        .badge-camara {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        .empty-table {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 24px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div class="header-title">
+            <h1>Gestor de Depósitos</h1>
+            <span>Sección Licencias</span>
+        </div>
+        <div class="logo-box">
+            <img src="logo.png" alt="Policía de Córdoba" class="logo-img">
+        </div>
+    </div>
+
+    <div class="form-body">
+        <form id="depositForm" onsubmit="agregarRegistro(event)">
+            
+            <!-- Bloque 1: Configuración de Entidad -->
+            <div class="section-label">01. Configuración de Entidad</div>
+            <div class="grid-layout">
+                <div class="form-group">
+                    <label for="tipoCuenta">Tipo de Cuenta</label>
+                    <select id="tipoCuenta" onchange="evaluarFlujo()">
+                        <option value="01">Caja de Ahorro (Convenio 06391)</option>
+                        <option value="03">Cuenta Judicial (Convenio 06390)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="banco">Banco</label>
+                    <select id="banco" onchange="evaluarFlujo()">
+                        <option value="093">Banco de Córdoba (Bancor)</option>
+                        <option value="011">Banco Nación</option>
+                        <option value="020">Banco Provincia</option>
+                        <option value="014">Banco Provincia de Buenos Aires</option>
+                        <option value="072">Banco Santander</option>
+                        <option value="007">Banco Galicia</option>
+                        <option value="017">Banco BBVA</option>
+                        <option value="015">Banco ICBC</option>
+                        <option value="285">Banco Macro</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="sucursal">Sucursal</label>
+                    <select id="sucursal">
+                        <!-- Dinámico -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="numCuenta">Número de Cuenta (Máx. 9 dígitos)</label>
+                    <input type="text" id="numCuenta" maxlength="9" placeholder="Ej: 123456789" autocomplete="off" oninput="validarNumCuenta(this)">
+                </div>
+            </div>
+
+            <!-- Bloque 2: Datos de Transacción -->
+            <div class="section-label">02. Datos de Transacción</div>
+            <div class="grid-layout">
+                <div class="form-group cbu-field" id="cbuContainer">
+                    <label for="cbu">CBU (22 dígitos)</label>
+                    <input type="text" id="cbu" maxlength="22" placeholder="Ingrese CBU de 22 dígitos" autocomplete="off" oninput="this.value=this.value.replace(/\D/g,'')">
+                </div>
+
+                <div class="form-group cuit-field" id="cuitContainer">
+                    <label for="cuit">CUIL / CUIT Titular (11 dígitos)</label>
+                    <input type="text" id="cuit" maxlength="11" placeholder="Ej: 30999256577" autocomplete="off" oninput="this.value=this.value.replace(/\D/g,'')">
+                </div>
+
+                <div class="form-group">
+                    <label for="importe">Importe</label>
+                    <div class="input-wrapper">
+                        <span class="currency-symbol">$</span>
+                        <input type="text" id="importe" class="input-currency" placeholder="0,00" autocomplete="off" oninput="formatearImporte(this)" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="fecha">Fecha de Acreditación</label>
+                    <input type="date" id="fecha" required>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="limpiarCamposFormulario()">Limpiar Campos</button>
+                <button type="submit" class="btn btn-add">+ Agregar Registro</button>
+            </div>
+
+        </form>
+
+        <!-- Bloque 3: Tabla de Registros -->
+        <div class="section-label">03. Registros Cargados</div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Banco</th>
+                        <th>Sucursal / CBU</th>
+                        <th>Cuenta / CUIT</th>
+                        <th>Importe</th>
+                        <th>Fecha Acred.</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaRegistros">
+                    <tr>
+                        <td colspan="7" class="empty-table">No hay registros agregados.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <button type="button" class="btn btn-danger btn-danger-large" onclick="vaciarLoteCompleto()">Limpiar Registros</button>
+            <button type="button" class="btn btn-primary" onclick="descargarArchivoTxt()">
+                Generar Archivo TXT (<span id="cantRegistrosLbl">0</span> registros)
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    const sucursalesBancor = [
+        { cod: "440", nombre: "440 - ADELIA MARIA" },
+        { cod: "327", nombre: "327 - ALCIRA GIGENA" },
+        { cod: "317", nombre: "317 - ALEJANDRO ROCA" },
+        { cod: "375", nombre: "375 - ALEJO LEDESMA" },
+        { cod: "939", nombre: "939 - ALEM" },
+        { cod: "347", nombre: "347 - ALICIA" },
+        { cod: "337", nombre: "337 - ALMAFUERTE" },
+        { cod: "316", nombre: "316 - ALTA GRACIA" },
+        { cod: "912", nombre: "912 - ALTO ALBERDI" },
+        { cod: "418", nombre: "418 - ALTOS DE CHIPION" },
+        { cod: "354", nombre: "354 - ARIAS" },
+        { cod: "340", nombre: "340 - ARROYITO" },
+        { cod: "437", nombre: "437 - ARROYO CABRAL" },
+        { cod: "924", nombre: "924 - BAJADA PUCARA" },
+        { cod: "376", nombre: "376 - BALLESTEROS" },
+        { cod: "332", nombre: "332 - BALNEAREA" },
+        { cod: "305", nombre: "305 - BELL VILLE" },
+        { cod: "371", nombre: "371 - BERROTARAN" },
+        { cod: "411", nombre: "411 - BRINKMAN" },
+        { cod: "367", nombre: "367 - BUCHARDO" },
+        { cod: "101", nombre: "101 - BUENOS AIRES" },
+        { cod: "406", nombre: "406 - BULNES" },
+        { cod: "358", nombre: "358 - CAMILO ALDAO" },
+        { cod: "306", nombre: "306 - CANALS" },
+        { cod: "372", nombre: "372 - CARRILOBO" },
+        { cod: "900", nombre: "900 - CATEDRAL" },
+        { cod: "913", nombre: "913 - CENTRO" },
+        { cod: "914", nombre: "914 - CERRO DE LAS ROSAS" },
+        { cod: "377", nombre: "377 - CINTRA" },
+        { cod: "931", nombre: "931 - CIUDADELA" },
+        { cod: "420", nombre: "420 - COLAZO" },
+        { cod: "405", nombre: "405 - COLONIA CAROYA" },
+        { cod: "369", nombre: "369 - COLONIA MARINA" },
+        { cod: "326", nombre: "326 - CORONEL MOLDES" },
+        { cod: "333", nombre: "333 - CORRAL DE BUSTOS" },
+        { cod: "419", nombre: "419 - CORRALITO" },
+        { cod: "315", nombre: "315 - COSQUÍN" },
+        { cod: "309", nombre: "309 - CRUZ ALTA" },
+        { cod: "324", nombre: "324 - CRUZ DEL EJE" },
+        { cod: "318", nombre: "318 - DEAN FUNES" },
+        { cod: "390", nombre: "390 - DEL CAMPILLO" },
+        { cod: "361", nombre: "361 - DESPEÑADEROS" },
+        { cod: "381", nombre: "381 - DEVOTO" },
+        { cod: "450", nombre: "450 - EL ARAÑADO" },
+        { cod: "425", nombre: "425 - EMBALSE" },
+        { cod: "357", nombre: "357 - ETRURIA" },
+        { cod: "943", nombre: "943 - FERREYRA" },
+        { cod: "380", nombre: "380 - FREYRE" },
+        { cod: "923", nombre: "923 - FUERZA AÉREA" },
+        { cod: "409", nombre: "409 - GENERAL BADISERA" },
+        { cod: "389", nombre: "389 - GENERAL CABRERA" },
+        { cod: "386", nombre: "386 - GENERAL DEHEZA" },
+        { cod: "329", nombre: "329 - GENERAL LEVALLE" },
+        { cod: "915", nombre: "915 - GENERAL PAZ" },
+        { cod: "388", nombre: "388 - GENERAL ROCA" },
+        { cod: "359", nombre: "359 - GUATIMOZIN" },
+        { cod: "319", nombre: "319 - HERNANDO" },
+        { cod: "330", nombre: "330 - HUINCA RENANCO" },
+        { cod: "429", nombre: "429 - IDIAZABAL" },
+        { cod: "362", nombre: "362 - INRIVILLE" },
+        { cod: "399", nombre: "399 - JAMES CRAIK" },
+        { cod: "308", nombre: "308 - JESUS MARIA" },
+        { cod: "323", nombre: "323 - JOVITA" },
+        { cod: "928", nombre: "928 - JUAN B. JUSTO" },
+        { cod: "348", nombre: "348 - JUSTINIANO POSSE" },
+        { cod: "356", nombre: "356 - LA CALERA" },
+        { cod: "944", nombre: "944 - LA CAÑADA" },
+        { cod: "346", nombre: "346 - LA CARLOTA" },
+        { cod: "432", nombre: "432 - LA CESIRA" },
+        { cod: "342", nombre: "342 - LA CUMBRE" },
+        { cod: "336", nombre: "336 - LA FALDA" },
+        { cod: "352", nombre: "352 - LA FRANCIA" },
+        { cod: "398", nombre: "398 - LA PARA" },
+        { cod: "426", nombre: "426 - LA PLAYOSA" },
+        { cod: "334", nombre: "334 - LABORDE" },
+        { cod: "345", nombre: "345 - LABOULAYE" },
+        { cod: "453", nombre: "453 - LAGUNA LARGA" },
+        { cod: "428", nombre: "428 - LAS ACEQUIAS" },
+        { cod: "438", nombre: "438 - LAS JUNTURAS" },
+        { cod: "343", nombre: "343 - LAS PERDICES" },
+        { cod: "364", nombre: "364 - LAS VARILLAS" },
+        { cod: "335", nombre: "335 - LEONES" },
+        { cod: "423", nombre: "423 - LOS CÓNDORES" },
+        { cod: "933", nombre: "933 - LOS GRANADEROS" },
+        { cod: "416", nombre: "416 - LUQUE" },
+        { cod: "455", nombre: "455 - MALAGUEÑO" },
+        { cod: "301", nombre: "301 - MARCOS JUÁREZ" },
+        { cod: "925", nombre: "925 - MERCADO NORTE" },
+        { cod: "338", nombre: "338 - MINA CLAVERO" },
+        { cod: "435", nombre: "435 - MONTE BUEY" },
+        { cod: "366", nombre: "366 - MONTE MAIZ" },
+        { cod: "303", nombre: "303 - MORTEROS" },
+        { cod: "417", nombre: "417 - NOETINGER" },
+        { cod: "917", nombre: "917 - NUEVA CORDOBA" },
+        { cod: "378", nombre: "378 - OLIVA" },
+        { cod: "331", nombre: "331 - ONCATIVO" },
+        { cod: "940", nombre: "940 - PASEO DEL JOCKEY" },
+        { cod: "422", nombre: "422 - PILAR" },
+        { cod: "918", nombre: "918 - PLAZA RIVADAVIA" },
+        { cod: "902", nombre: "902 - POETA LUGONES" },
+        { cod: "353", nombre: "353 - PORTEÑA" },
+        { cod: "321", nombre: "321 - POZO DEL MOLLE" },
+        { cod: "433", nombre: "433 - PUEBLO ITALIANO" },
+        { cod: "942", nombre: "942 - RAFAEL NUÑEZ" },
+        { cod: "907", nombre: "907 - RECTA MARTINOLI" },
+        { cod: "350", nombre: "350 - RÍO CEBALLOS" },
+        { cod: "443", nombre: "443 - RIO CUARTO ALBERDI" },
+        { cod: "427", nombre: "427 - RIO CUARTO BANDA NORTE" },
+        { cod: "302", nombre: "302 - RÍO CUARTO CENTRO" },
+        { cod: "400", nombre: "400 - RIO CUARTO SUR" },
+        { cod: "382", nombre: "382 - RÍO PRIMERO" },
+        { cod: "451", nombre: "451 - RÍO SEGUNDO" },
+        { cod: "374", nombre: "374 - RÍO TERCERO" },
+        { cod: "373", nombre: "373 - ROSARIO" },
+        { cod: "341", nombre: "341 - SACANTA" },
+        { cod: "311", nombre: "311 - SALSACATE" },
+        { cod: "300", nombre: "300 - SALSIPUEDES" },
+        { cod: "351", nombre: "351 - SAMPACHO" },
+        { cod: "402", nombre: "402 - SAN AGUSTIN" },
+        { cod: "370", nombre: "370 - SAN BASILIO" },
+        { cod: "307", nombre: "307 - SAN FCO CENTRO" },
+        { cod: "441", nombre: "441 - SAN FCO OESTE" },
+        { cod: "328", nombre: "328 - SAN FRANCISCO DEL CHAÑAR" },
+        { cod: "455", nombre: "455 - SAN FRANCISCO SARMIENTO" },
+        { cod: "310", nombre: "310 - SAN JOSÉ DE LA DORMIDA" },
+        { cod: "401", nombre: "401 - SAN MARCOS SUD" },
+        { cod: "919", nombre: "919 - SAN MARTIN" },
+        { cod: "921", nombre: "921 - SAN VICENTE" },
+        { cod: "431", nombre: "431 - SANTA EUFEMIA" },
+        { cod: "339", nombre: "339 - SANTA ROSA DE CALAMUCHITA" },
+        { cod: "320", nombre: "320 - SANTA ROSA DE RÍO PRIMERO" },
+        { cod: "403", nombre: "403 - SANTIAGO TEMPLE" },
+        { cod: "363", nombre: "363 - SATURNINO MARÍA LASPIUR" },
+        { cod: "413", nombre: "413 - SERRANO" },
+        { cod: "365", nombre: "365 - TANCACHA" },
+        { cod: "434", nombre: "434 - TICINO" },
+        { cod: "922", nombre: "922 - TRIBUNALES" },
+        { cod: "393", nombre: "393 - UCACHA" },
+        { cod: "396", nombre: "396 - VIAMONTE" },
+        { cod: "424", nombre: "424 - VICUÑA MACKENNA" },
+        { cod: "392", nombre: "392 - VILLA ALLENDE" },
+        { cod: "349", nombre: "349 - VILLA CARLOS PAZ" },
+        { cod: "314", nombre: "314 - VILLA DE MARIA" },
+        { cod: "368", nombre: "368 - VILLA DE SOTO" },
+        { cod: "408", nombre: "408 - VILLA DEL ROSARIO" },
+        { cod: "325", nombre: "325 - VILLA DEL TOTORAL" },
+        { cod: "322", nombre: "322 - VILLA DOLORES" },
+        { cod: "452", nombre: "452 - VILLA GENERAL BELGRANO" },
+        { cod: "430", nombre: "430 - VILLA HUIDOBRO" },
+        { cod: "304", nombre: "304 - VILLA MARIA" },
+        { cod: "439", nombre: "439 - VILLA MARIA TERMINAL" },
+        { cod: "415", nombre: "415 - VILLA NUEVA" },
+        { cod: "395", nombre: "395 - VILLA VALERIA" }
+    ];
+
+    let listaLote = [];
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const fechaInput = document.getElementById('fecha');
+        const hoy = new Date().toISOString().split('T')[0];
+        fechaInput.min = hoy;
+    });
+
+    function validarNumCuenta(input) {
+        input.value = input.value.replace(/\D/g, '').slice(0, 9);
+    }
+
+    function formatearImporte(input) {
+        let valor = input.value.replace(/[^0-9,]/g, '');
+        const partes = valor.split(',');
+        if (partes.length > 2) valor = partes[0] + ',' + partes.slice(1).join('');
+        if (partes[1]) partes[1] = partes[1].slice(0, 2);
+
+        let entero = partes[0].replace(/\D/g, '');
+        if (entero) {
+            entero = parseInt(entero, 10).toLocaleString('es-AR');
+            input.value = partes.length > 1 ? `${entero},${partes[1]}` : entero;
+        } else {
+            input.value = '';
+        }
+
+        const rawEntero = partes[0].replace(/\D/g, '') || '0';
+        const rawDecimal = (partes[1] || '').padEnd(2, '0');
+        input.dataset.raw = `${rawEntero}${rawDecimal}`;
+    }
+
+    function evaluarFlujo() {
+        const tipoCuentaSelect = document.getElementById('tipoCuenta');
+        const tipoCuenta = tipoCuentaSelect.value;
+        const bancoSelect = document.getElementById('banco');
+        const sucursalSelect = document.getElementById('sucursal');
+        const numCuentaInput = document.getElementById('numCuenta');
+        const cbuContainer = document.getElementById('cbuContainer');
+        const cbuInput = document.getElementById('cbu');
+        const cuitContainer = document.getElementById('cuitContainer');
+        const cuitInput = document.getElementById('cuit');
+
+        // Bloqueo del selector si hay items cargados
+        tipoCuentaSelect.disabled = listaLote.length > 0;
+
+        const esBancor = bancoSelect.value === '093';
+
+        if (esBancor) {
+            sucursalSelect.innerHTML = '';
+            if (tipoCuenta === '03') {
+                sucursalesBancor.forEach(s => {
+                    const numCod = parseInt(s.cod, 10);
+                    if (s.cod === '922' || numCod < 900) {
+                        const opt = document.createElement('option');
+                        opt.value = s.cod;
+                        opt.textContent = s.nombre;
+                        sucursalSelect.appendChild(opt);
+                    }
+                });
+            } else {
+                sucursalesBancor.forEach(s => {
+                    const opt = document.createElement('option');
+                    opt.value = s.cod;
+                    opt.textContent = s.nombre;
+                    sucursalSelect.appendChild(opt);
+                });
+            }
+
+            sucursalSelect.disabled = false;
+            numCuentaInput.disabled = false;
+            if (numCuentaInput.value === '0') numCuentaInput.value = '';
+            
+            cbuContainer.classList.remove('active');
+            cuitContainer.classList.remove('active');
+            cbuInput.required = false;
+            cuitInput.required = false;
+
+        } else {
+            sucursalSelect.innerHTML = '<option value="800">800 - CAMARA</option>';
+            sucursalSelect.disabled = true;
+
+            numCuentaInput.value = '0';
+            numCuentaInput.disabled = true;
+            cbuContainer.classList.add('active');
+            cuitContainer.classList.add('active');
+            cbuInput.required = true;
+            cuitInput.required = true;
+        }
+    }
+
+    function agregarRegistro(event) {
+        event.preventDefault();
+
+        const fechaInput = document.getElementById('fecha').value;
+        const fechaSeleccionada = new Date(fechaInput + 'T00:00:00');
+        const hoy = new Date();
+        hoy.setHours(0, 0, 0, 0);
+
+        if (fechaSeleccionada < hoy) {
+            alert('La fecha de acreditación no puede ser anterior a la fecha actual.');
+            return;
+        }
+
+        const diaSemana = fechaSeleccionada.getDay();
+        if (diaSemana === 0 || diaSemana === 6) {
+            alert('La fecha de acreditación no puede ser un fin de semana.');
+            return;
+        }
+
+        const registro = {
+            tipoCuentaVal: document.getElementById('tipoCuenta').value,
+            banco: document.getElementById('banco').value,
+            bancoNombre: document.getElementById('banco').options[document.getElementById('banco').selectedIndex].text,
+            sucursal: document.getElementById('sucursal').value,
+            numCuenta: document.getElementById('numCuenta').value,
+            importeVis: document.getElementById('importe').value,
+            importeRaw: document.getElementById('importe').dataset.raw || "0",
+            fecha: fechaInput,
+            cbu: document.getElementById('cbu').value,
+            cuit: document.getElementById('cuit').value
+        };
+
+        if (registro.banco !== '093' && registro.cbu.length !== 22) {
+            alert('Para operaciones de Cámara se requiere un CBU válido de 22 dígitos.');
+            return;
+        }
+
+        if (registro.banco !== '093' && registro.cuit.length !== 11) {
+            alert('Para operaciones de Cámara se requiere un CUIL/CUIT válido de 11 dígitos.');
+            return;
+        }
+
+        listaLote.push(registro);
+        renderizarTabla();
+        limpiarCamposFormulario();
+        evaluarFlujo();
+    }
+
+    function eliminarRegistro(index) {
+        listaLote.splice(index, 1);
+        renderizarTabla();
+        evaluarFlujo();
+    }
+
+    function vaciarLoteCompleto() {
+        if (listaLote.length === 0) return;
+        if (confirm('¿Desea limpiar todos los registros cargados?')) {
+            listaLote = [];
+            renderizarTabla();
+            evaluarFlujo();
+        }
+    }
+
+    function renderizarTabla() {
+        const tbody = document.getElementById('tablaRegistros');
+        const cantLbl = document.getElementById('cantRegistrosLbl');
+        cantLbl.textContent = listaLote.length;
+
+        if (listaLote.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" class="empty-table">No hay registros agregados.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = '';
+        listaLote.forEach((reg, index) => {
+            const tr = document.createElement('tr');
+            const esBancor = reg.banco === '093';
+
+            tr.innerHTML = `
+                <td><b>${index + 1}</b></td>
+                <td><span class="badge ${esBancor ? 'badge-bancor' : 'badge-camara'}">${esBancor ? 'Bancor' : 'Cámara'}</span></td>
+                <td>${esBancor ? 'Suc. ' + reg.sucursal : reg.cbu}</td>
+                <td>${esBancor ? reg.numCuenta : 'CUIT ' + reg.cuit}</td>
+                <td><b>$ ${reg.importeVis}</b></td>
+                <td>${reg.fecha.split('-').reverse().join('/')}</td>
+                <td><button type="button" class="btn btn-danger" onclick="eliminarRegistro(${index})">Quitar</button></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function limpiarCamposFormulario() {
+        document.getElementById('importe').value = '';
+        document.getElementById('cbu').value = '';
+        document.getElementById('cuit').value = '';
+        if (document.getElementById('banco').value === '093') {
+            document.getElementById('numCuenta').value = '';
+        }
+    }
+
+    function descargarArchivoTxt() {
+        if (listaLote.length === 0) {
+            alert('Agregue al menos un registro antes de generar el archivo.');
+            return;
+        }
+
+        const primerReg = listaLote[0];
+        let nombreArchivo = primerReg.tipoCuentaVal === '03' ? 'JUD06390.txt' : '06391.txt';
+
+        const lineasTxt = listaLote.map((reg, index) => {
+            let fijoTipo = "006";
+            let fijoIntermedio = "013";
+            let convenio = "06391";
+
+            if (reg.tipoCuentaVal === '03') {
+                fijoTipo = "029";
+                fijoIntermedio = "01J";
+                convenio = "06390";
+            }
+
+            const sucursal = reg.sucursal.padStart(5, '0');
+            const numCuenta = reg.numCuenta.padStart(9, '0');
+            const importe = reg.importeRaw.padStart(18, '0');
+            const fecha = reg.fecha.replace(/-/g, '');
+            const comprobante = String(index + 1).padStart(6, '0');
+
+            let bloqueFinal46 = "";
+
+            if (reg.banco === '093') {
+                bloqueFinal46 = "".padStart(46, '0');
+            } else {
+                const cbu = reg.cbu.padStart(22, '0');
+                const rellenoCeros12 = "".padStart(12, '0');
+                const cuitFormateado = "1" + reg.cuit.padStart(11, '0');
+                bloqueFinal46 = `${cbu}${rellenoCeros12}${cuitFormateado}`;
+            }
+
+            return `${fijoTipo}${sucursal}${fijoIntermedio}${numCuenta}${importe}${fecha}${convenio}${comprobante}${bloqueFinal46}`;
+        });
+
+        const contenidoFinal = lineasTxt.join('\r\n');
+
+        const blob = new Blob([contenidoFinal], { type: 'text/plain;charset=utf-8' });
+        const enlace = document.createElement('a');
+        enlace.href = URL.createObjectURL(blob);
+        enlace.download = nombreArchivo;
+        enlace.click();
+
+        listaLote = [];
+        renderizarTabla();
+        evaluarFlujo();
+    }
+
+    evaluarFlujo();
+</script>
+
+</body>
+</html>
