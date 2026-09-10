@@ -340,14 +340,7 @@
                     <label for="banco">Banco</label>
                     <select id="banco" onchange="evaluarFlujo()">
                         <option value="093">Banco de Córdoba (Bancor)</option>
-                        <option value="011">Banco Nación</option>
-                        <option value="020">Banco Provincia</option>
-                        <option value="014">Banco Provincia de Buenos Aires</option>
-                        <option value="072">Banco Santander</option>
-                        <option value="007">Banco Galicia</option>
-                        <option value="017">Banco BBVA</option>
-                        <option value="015">Banco ICBC</option>
-                        <option value="285">Banco Macro</option>
+                        <option value="OTROS">OTRO BANCO</option>
                     </select>
                 </div>
 
@@ -758,7 +751,7 @@
 
             tr.innerHTML = `
                 <td><b>${index + 1}</b></td>
-                <td><span class="badge ${esBancor ? 'badge-bancor' : 'badge-camara'}">${esBancor ? 'Bancor' : 'Cámara'}</span></td>
+                <td><span class="badge ${esBancor ? 'badge-bancor' : 'badge-camara'}">${esBancor ? 'Bancor' : 'Otros Bancos'}</span></td>
                 <td>${esBancor ? 'Suc. ' + reg.sucursal : reg.cbu}</td>
                 <td>${esBancor ? reg.numCuenta : 'CUIT ' + reg.cuit}</td>
                 <td><b>$ ${reg.importeVis}</b></td>
@@ -785,7 +778,7 @@
         }
 
         const primerReg = listaLote[0];
-        let nombreArchivo = primerReg.tipoCuentaVal === '03' ? 'JUD06390.txt' : '06391.txt';
+        let nombreArchivo = primerReg.tipoCuentaVal === '03' ? 'JUD06390.txt' : 'CUA06391.txt';
 
         const lineasTxt = listaLote.map((reg, index) => {
             let fijoTipo = "006";
@@ -818,7 +811,6 @@
             return `${fijoTipo}${sucursal}${fijoIntermedio}${numCuenta}${importe}${fecha}${convenio}${comprobante}${bloqueFinal46}`;
         });
 
-        // Acá agregamos el salto de línea al final del archivo (\r\n)
         const contenidoFinal = lineasTxt.join('\r\n') + '\r\n';
 
         const blob = new Blob([contenidoFinal], { type: 'text/plain;charset=utf-8' });
